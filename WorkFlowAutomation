@@ -1,0 +1,60 @@
+WorkFlow Automation Using N8N and Zaipper
+
+import imaplib
+
+mail=imaplib.IMAP4_SSL("imap.gmail.com")
+mail.login(user="kpgokul18@gmail.com",password="Gowthamkp@773")
+mail.select("inbox")
+
+from openai import OpenAI
+
+# IMPORTANT: Replace 'api_key' with your actual OpenAI API key or use an environment variable.
+client = OpenAI(api_key="api_key")
+
+# For chat-based models, use client.chat.completions.create and pass 'messages'.
+# The model name should also be a chat model (e.g., 'gpt-3.5-turbo', 'gpt-4').
+response = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "user", "content": "hello world"}
+    ]
+)
+
+# Access the content from the response correctly for chat completions.
+res = response.choices[0].message.content
+print(res)
+
+
+import psycopg2
+try:
+    con=psycopg2.connect(
+        host="localhost", 
+        database="postgres",
+        user="postgres",
+        password="Gowthamkp@773"
+    )
+    conn=con.cursor()
+    conn.execute("insert into Query values(%s, %s, %s)", (res, res, res))
+    con.commit()
+    print("Data inserted successfully.")
+
+except psycopg2.Error as e:
+    print(f"Database error: {e}")
+    if con:
+        con.rollback()
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+finally:
+    if conn: 
+        conn.close()
+    if con: 
+        con.close()
+import smtplib
+
+server=smtplib.SMTP("smtp.gmail.com",587)
+server.starttls()
+server.login(user="kpgokul18@gmail.com",password="Gowthamkp@773")
+
+server.sendmail(from_addr="kpgokul18@gmmail.com",to_addrs="kpgokul18@gmail.com")
+
+server.quit()
