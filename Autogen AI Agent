@@ -1,0 +1,34 @@
+import requests
+
+def get_wether(query:str):
+  uri="https://openweathermap.org/"
+
+  response=requests.get(url=uri)
+  weather=response.json()
+
+  if "main" in weather:
+    return {
+        "weather":[weather.get("weather")],
+        "temp":weather.get("temp"),
+    }
+
+  else:
+    print("not weather report")
+
+
+from re import A
+from autogen import AssistantAgent, UserProxyAgent
+
+llm_config={
+    "model":"gpt-3.5-turbo",
+    "temperature":0,
+    "api_key":"api_key"
+}
+
+def Agent(query:str):
+  return get_wether(query)
+
+agent=AssistantAgent(name="agent",llm_config=llm_config)
+user_proxy=UserProxyAgent(name="user_proxy",human_input_mode="NEVER",max_consecutive_auto_reply=10)
+
+user_proxy.initiate_chat(agent,message=query)
