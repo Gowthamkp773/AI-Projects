@@ -1,0 +1,67 @@
+1.Weather Tool
+
+from mcp.server.fastmcp import FastMCP
+
+mcp=FastMCP("multi agent tool")
+api_key="YOUR_API_KEY"
+
+import requests
+from mcp.server.fastmcp import FastMCP
+
+@mcp.tool()
+def weathertool(query:str):
+  global api_key 
+  if api_key == "YOUR_API_KEY":
+      return "Error: Please replace 'YOUR_API_KEY' in cell 1YC4Zp5F0K2R with your actual OpenWeatherMap API key."
+  url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&appid={api_key}&units=metric"
+
+  response = requests.get(url)
+
+  if response.status_code == 200:
+    data = response.json()
+    city = data['name']
+    country = data['sys']['country']
+    temp = data['main']['temp']
+    description = data['weather'][0]['description']
+    return f"Weather in {city}, {country}: {description}, {temp}°C"
+  else:
+    return f"Error fetching weather data: {response.status_code} - {response.text}"
+
+user_input="london"
+result=weathertool(user_input)
+print(result)
+
+def weather(query):
+  return weathertool(query)
+
+if __name__ == "__main__":
+  mcp.run()
+
+2.Stock Price Tool
+
+import requests
+from mcp.server.fastmcp import FastMCP
+
+@mcp.tool()
+def stocktool(query:str):
+  global api_key 
+  if api_key == "YOUR_API_KEY":
+      return "Error: Please replace 'YOUR_API_KEY' in cell 1YC4Zp5F0K2R with your actual OpenWeatherMap API key."
+  url = f"https://finance.yahoo.com/portfolios/?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAMQ56tXFm0TTRkL3fkbWuRZisxpme1t2UeSF01ASHHNuBU3OL3vZoqmnYTPqvbctSRXHhXYRbzT3_xPsVJVKb_IE15_LXH_507VuiwW-7RpPQv6kAmlmMJ1F9h5kU0rfBvYb01JH9qWsCWN8EtYixrSFjigXJ_igPwI6sR6ngidG"
+
+  response = requests.get(url)
+
+  if response.status_code == 200:
+    data = response.json()
+    stock=data['name']
+    price=data['price']
+    return f"stock in {stock},{price}"
+  else:
+    return f"Error fetching weather data: {response.status_code} - {response.text}"
+
+input_code=input("enter the input")
+result=stocktool(input_code)
+print(result)
+
+def Executecode(query):
+  return stocktool(query) 
