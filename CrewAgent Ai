@@ -1,0 +1,52 @@
+from crewai import Agent
+
+import psycopg2
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+conn=psycopg2.connect(
+    host=os.getenv("HOST"),
+    database=os.getenv("DATABASE"),
+    user=os.getenv("USER"),
+    password=os.getenv("PASSWORD")
+)
+
+con=conn.cursor()
+con.execute("select * from Agents")
+con.execute("insert into Agents values(%s,%s,%s)", ("res","res","res"))
+conn.commit()
+con.close()
+conn.close()
+
+
+import requests
+
+def Yahoo_finance(query:str):
+  uri="https://finance.yahoo.com/portfolios/?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAMQ56tXFm0TTRkL3fkbWuRZisxpme1t2UeSF01ASHHNuBU3OL3vZoqmnYTPqvbctSRXHhXYRbzT3_xPsVJVKb_IE15_LXH_507VuiwW-7RpPQv6kAmlmMJ1F9h5kU0rfBvYb01JH9qWsCWN8EtIixrSFjigXJ_igPwI6sR6ngidG"
+  response=requests.get(uri)
+  # The original code had an unreachable return statement here.
+  # The logic should be to check 'main' in the JSON, then return accordingly.
+  response_json = response.json()
+  if "main" in response_json:
+    return response_json["main"]
+  else:
+    return response_json
+
+ from crewai import Agent
+from langchain_community.tools import Tool
+
+llm_config={
+    "model": "gpt-4",
+    "api_key": "api_key",
+}
+
+marketAgent = Agent(
+    role='Market Research Analyst',
+    goal='Identify market trends and competitor strategies.',
+    backstory='An expert in market analysis, skilled at uncovering opportunities and threats.',
+    llm_config=llm_config,
+    tools=[Tool(name='Yahoo Finance Search', func=Yahoo_finance, description='A tool for searching Yahoo Finance.')]
+)
+result=crew.kickoff()
+print(result)
